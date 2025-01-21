@@ -1,0 +1,30 @@
+@echo off
+:: Infinite loop to run iPerf tests
+:loop
+
+:: Get the current UTC date and time for Uplink test start
+for /f "tokens=*" %%i in ('powershell -command "(Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss.fffZ')"') do set UTC_DATE_TIME=%%i
+
+:: Log the UTC date and time for the Uplink test
+echo [%UTC_DATE_TIME%] Starting Uplink Test >> iperf_results.log
+
+:: Run iPerf Uplink Test: Client to Server for 5 minutes with TCP window size 2M
+iperf-2.0.13-win.exe -c 10.174.120.238 -B 10.174.98.34 -p 9007 -t 300 -w 2M -i 1 >> iperf_results.log 2>&1
+
+:: Wait for 30 minutes
+timeout /t 1800 /nobreak > nul
+
+:: Get the current UTC date and time for Downlink test start
+for /f "tokens=*" %%i in ('powershell -command "(Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss.fffZ')"') do set UTC_DATE_TIME=%%i
+
+:: Log the UTC date and time for the Downlink test
+echo [%UTC_DATE_TIME%] Starting Downlink Test >> iperf_results.log
+
+:: Run iPerf Downlink Test: Server to Client for 5 minutes with TCP window size 2M
+iperf-2.0.13-win.exe -c 10.174.120.238 -B 10.174.98.34 -p 9007 -t 300 -w 2M -R -i 1 >> iperf_results.log 2>&1
+
+:: Wait for another 30 minutes
+timeout /t 1800 /nobreak > nul
+
+:: Repeat the loop
+goto loop

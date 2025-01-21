@@ -1,0 +1,31 @@
+@echo off
+:: Infinite loop to run iPerf UDP tests
+:loop
+
+:: Get the current UTC date and time for UDP Uplink test start
+for /f "tokens=*" %%i in ('powershell -command "(Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss.fffZ')"') do set UTC_DATE_TIME=%%i
+
+:: Log the UTC date and time for the UDP Uplink test
+echo [%UTC_DATE_TIME%] Starting UDP Uplink Test >> udp_iperf_results.log
+
+:: Run iPerf UDP Uplink Test: Client to Server for 5 minutes
+iperf-2.0.13-win.exe -c 10.174.120.238 -B 10.174.98.34 -p 9007 -u -b 400M -t 300 -l 1300B -i 1 >> udp_iperf_results.log 2>&1
+
+
+:: Wait for 30 minutes
+timeout /t 1800 /nobreak > nul
+
+:: Get the current UTC date and time for UDP Downlink test start
+for /f "tokens=*" %%i in ('powershell -command "(Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss.fffZ')"') do set UTC_DATE_TIME=%%i
+
+:: Log the UTC date and time for the UDP Downlink test
+echo [%UTC_DATE_TIME%] Starting UDP Downlink Test >> udp_iperf_results.log
+
+:: Run iPerf UDP Downlink Test: Server to Client for 5 minutes
+iperf-2.0.13-win.exe -c 10.174.120.238 -B 10.174.98.34 -p 9007 -u -b 400M -t 300 -R -l 1300B -i 1 >> udp_iperf_results.log 2>&1
+
+:: Wait for another 30 minutes
+timeout /t 1800 /nobreak > nul
+
+:: Repeat the loop
+goto loop

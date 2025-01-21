@@ -1,0 +1,15 @@
+@echo off
+:: Infinite loop for running iPerf server and logging results
+:loop
+
+:: Get the current UTC date and time in the format 'yyyy-MM-dd HH:mm:ss.fffZ'
+for /f "tokens=*" %%i in ('powershell -command "(Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss.fff') + 'Z'"') do set UTC_DATE_TIME=%%i
+
+:: Log the date and time for the server start with iPerf output
+echo [%UTC_DATE_TIME%] Starting iPerf Server >> server_iperf_results.log
+
+:: Start the iPerf server and append the results to the log
+iperf-2.0.13-win.exe -s -p 9007 -B 10.174.120.238 -w 2M >> server_iperf_results.log 2>&1
+
+:: The server will now continue running indefinitely
+pause
