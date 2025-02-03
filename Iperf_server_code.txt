@@ -9,7 +9,7 @@ for /f "tokens=*" %%i in ('powershell -command "(Get-Date).ToUniversalTime().ToS
 echo [%UTC_DATE_TIME%] Starting iPerf Server >> server_iperf_results.log
 
 :: Start the iPerf server and append the results to the log
-iperf-2.0.13-win.exe -s -p 9007 -B 10.174.120.238 -w 2M >> server_iperf_results.log 2>&1
+iperf-2.0.13-win.exe -s -p 9007 -B server_ip -w 2M >> server_iperf_results.log 2>&1
 
 :: The server will now continue running indefinitely
 pause
